@@ -1,54 +1,26 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 
-namespace CsQRNG
+namespace QRNGDotNet
 {
 
     // BASE INTERFACE
-    public abstract class QRNG
+    public abstract class QRNG: Random
     {
-        public abstract double Next(uint k);
+        public abstract void ResetDimension();
+        public abstract void Reset();
     }
     //INTERFACE FOR PARALLEL QRNG
     public abstract class ParallelQRNG: QRNG
     {
         public abstract class QRNGPartition
         {
-            // skipahead
-            public abstract double Next();
-
-        }
-        public abstract QRNGPartition[] GetPartitions(int nb_partitions);
-    }
-
-    //DECORATE CLASS TO GET SEQUENTIAL IMPLEMENTATION
-    public class SequentialQRNGGenerator
-    {
-        private uint k;
-        private QRNG qrng;
-
-        public SequentialQRNGGenerator(QRNG qrng)
-        {
-            this.qrng = qrng;
+            public abstract uint Next();
+            public abstract void Reset();
         }
 
-        public double Next()
-        {
-            double next = this.qrng.Next(this.k);
-            this.k++;
-            return next;
-        }
-
-        public double[] Next(uint n)
-        {
-            double[] v = new double[n];
-            for (int i = 0; i < n; i++, this.k++)
-            {
-                v[k] = this.qrng.Next(k);
-            }
-
-            return v;
-        }
+        public abstract QRNGPartition[] GetPartitions();
     }
 
     public class ParallelQRNGGenerator
@@ -71,6 +43,7 @@ namespace CsQRNG
         }
 
         private CircularLinkedList<ParallelQRNG.QRNGPartition[]> partitions;
+        private IEnumerator<ParallelQRNG.QRNGPartition[]> partitions_enum;
         public uint d;
         private object _lock = new object();
 
@@ -94,7 +67,7 @@ namespace CsQRNG
             for (uint i = 0; i < this.d; i++)
             {
                 ParallelQRNG dimension = (ParallelQRNG)Activator.CreateInstance(qrng);
-                dim[i] = dimension.GetPartitions(this.MaxDegreeOfParallelism);
+                dim[i] = dimension.GetPartitions();
 
             }
 
@@ -118,8 +91,9 @@ namespace CsQRNG
         {
             ParallelQRNG.QRNGPartition[] parts = null;
             lock (this._lock)
-            { 
-                parts = this.partitions.Next();
+            {
+                this.partitions_enum.MoveNext();
+                parts = this.partitions_enum.Current;
             }
             double[] value = new double[this.d];
  

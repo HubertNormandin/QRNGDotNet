@@ -1,174 +1,117 @@
 ﻿using System;
-using System.Threading;
+using System.Collections;
+using System.Collections.Generic;
 
-namespace CsQRNG
+
+namespace QRNGDotNet
 {
-    public class CircularLinkedList<T>
+    public class CircularLinkedList<T>: IList<T>
     {
-        
-        internal class Node
+        public class CircularLinkedListEnumerator<T> : IEnumerator<T>
         {
+            private ArrayList arr;
+            private IEnumerator enumerator;
+            public object Current => this.enumerator.Current;
 
-            public T Item;
+            T IEnumerator<T>.Current => (T)this.enumerator.Current;
 
-            public Node Next;
-            private SpinLock _lock = new SpinLock(true);
-            private object lock_taken;
-
-            public Node(T item)
+            public CircularLinkedListEnumerator(ArrayList arr)
             {
-                this.Item = item;
-                this.lock_taken = false;
+                this.arr = arr;
+                this.enumerator = arr.GetEnumerator();
+            }
+            public bool MoveNext()
+            {
+                //if MoveNext is true 
+                bool succeeded = this.enumerator.MoveNext();
+                if (!succeeded )
+                {
+                    this.enumerator.Reset();
+                    this.enumerator.MoveNext();
+                }
+                return true;
             }
 
-            public void Lock()
+            public void Reset()
             {
-                Monitor.Enter(this.lock_taken);
-                
+                this.enumerator.Reset();
             }
 
-            public void Unlock()
+            public void Dispose()
             {
-                Monitor.Exit(this.lock_taken);
-
+                throw new NotImplementedException();
             }
         }
-
-        private Node head;
-        private Node tail;
-        private Node current;
-        private Node previous = null;
-        public int Size;
-        public object _lock = new object();
+        private ArrayList arr;
 
         public CircularLinkedList()
         {
-            this.Size = 0;
-            this.current = this.head;
-            this.previous = this.head;
+            this.arr = new ArrayList();
+        }
+        // TODO : Make not usable
+        public object this[int index] { get => this.arr[index]; set => this.arr[index] =value; }
+
+        public bool IsReadOnly => this.arr.IsReadOnly;
+
+        public bool IsFixedSize => this.arr.IsFixedSize;
+
+        public int Count => this.arr.Count;
+
+        public object SyncRoot => this.arr.SyncRoot;
+
+        public bool IsSynchronized => this.arr.IsSynchronized;
+
+        T IList<T>.this[int index] { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public int IndexOf(T item)
+        {
+            return this.arr.IndexOf(item);
         }
 
-        /// <summary>
-        /// Add the item at the end of the circular list.
-        /// </summary>
-        /// <param name="item"> </param>
-        /// <returns></returns>
-        public bool Add(T item)
+        public void Insert(int index, T item)
         {
-            // CREATE NEW EMPTY NODE
-            Node n = new Node(item);
-            if (this.tail == null || this.head == null)
-            {
-                lock (this._lock)
-                {
-                    n.Next = n;
-                    this.head = n;
-                    this.tail = this.head;
-                }
-            }
-            else
-            {
-                this.tail.Lock();
-                Node curr = this.tail;
-                try
-                {
-                    this.tail.Next = n;
-                    n.Next = this.head;
-                    this.tail = n;
-                }
-                finally
-                {
-                    curr.Unlock();
-                }
-            }
-            this.Size++;
+            this.arr.Insert(index, item);
+        }
+
+        public void RemoveAt(int index)
+        {
+            this.arr.Remove(index);
+        }
+
+        public void Add(T item)
+        {
+            this.arr.Add(item);
+        }
+
+        public void Clear()
+        {
+            this.arr.Clear();
+        }
+
+        public bool Contains(T item)
+        {
+            return this.arr.Contains(item);
+        }
+
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            this.arr.CopyTo(array, arrayIndex);
+        }
+
+        public bool Remove(T item)
+        {
+            this.arr.Remove(item);
             return true;
         }
 
-        /// <summary>
-        /// Delete the current item and go to the next node.
-        /// </summary>
-        /// <returns>True if the operation was successful, false otherwise. </returns>
-        public bool DeleteCurrent()
+        public IEnumerator<T> GetEnumerator()
         {
-            if (this.current == null || this.previous == null)
-            {
-                this.current = this.head;
-                this.previous = this.tail;
-            }
-            
-            this.previous.Lock();
-            Node curr = this.current;
-            curr.Lock();
-            try
-            {
-                this.previous.Next = this.current.Next;
-                this.current = current.Next;
-                curr.Unlock();
-                this.Size--;
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-            finally
-            {
-                this.previous.Lock();
-            }
+            return new CircularLinkedListEnumerator<T>(this.arr);
         }
 
-        /// <summary>
-        /// Delete the item specify by the parameter item. 
-        /// </summary>
-        /// <param name="item">The item to delete.</param>
-        /// <returns>True if the operation was successful, false otherwise.</returns>
-        public bool Delete(T item)
+        IEnumerator IEnumerable.GetEnumerator()
         {
-            if ((object)item == (object)this.current.Item)
-            {
-                return DeleteCurrent();
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Goes to the next node and return the next item
-        /// </summary>
-        /// <returns>The next Item in the linked list</returns>
-        public T Next()
-        {
-            T node = default(T);
-            try
-            {
-                if (this.current == null)
-                {
-                    this.previous = tail;
-                    this.current = head;
-                }
-                this.current.Lock();
-                try
-                {
-                    node = this.current.Item;
-                    this.previous = this.current;
-                    // ATOMIC?
-                    this.current = this.current.Next;
-                }
-                finally
-                {
-                    this.previous.Unlock();
-                }
-            }
-            catch (NullReferenceException)
-            {
-                throw new NullReferenceException("The CircularLinkedList is empty.");
-            }
-
-
-
-            return node;
-
+            return new CircularLinkedListEnumerator<T>(this.arr);
         }
     }
 }
