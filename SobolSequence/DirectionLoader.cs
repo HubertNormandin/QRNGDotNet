@@ -148,14 +148,15 @@ namespace QRNGDotNet.SobolSequence
                 }
             }
 
-            private void OpenDirectionFile(string path)
+            private void OpenDirectionFile(Stream path)
             {
                 try
                 {
                     try
                     {
+
                         // Open and read the file containing the direction number
-                        direction_reader = new StreamReader(File.OpenRead(path), true);
+                        direction_reader = new StreamReader(path, true);
 
                         //skip the header
                         direction_reader.ReadLine();

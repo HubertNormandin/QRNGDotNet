@@ -51,7 +51,6 @@ namespace QRNGDotNet.SobolSequence
                         this.length *= 2;
                     }
                 }
-                Console.Write(yn + " " + m + " " + v+" ");
                 this.X[k] = yn ^ m ^ v;
                 this.k++;
                 return yn;
@@ -88,12 +87,6 @@ namespace QRNGDotNet.SobolSequence
             this.dvl = DirectionLoader.GetDirectionNumberLoader(criteria);
             //Get the Next Directions
             this.dir = this.dvl.Next();
-
-            foreach(uint i in this.dir.v)
-            {
-                Console.Write(i + " ");
-            }
-            Console.WriteLine("\n");
 
             // Set the number of partition
             this.MaxDegreeOfParallelism = MaxDegreeOfParallelism;

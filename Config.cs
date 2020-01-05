@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Reflection;
 
 namespace QRNGDotNet
 {
     public sealed class Config
     {
+        //Instance of the singleton
         private static readonly Config _instance = new Config();
-        private const string DirectionNumber5 = "..\\..\\..\\..\\QRNGDotNet\\DirectionNumber\\joe-kuo-5.21201";
-        private const string DirectionNumber6 = "..\\..\\..\\..\\QRNGDotNet\\DirectionNumber\\joe-kuo-6.21201";
-        private const string DirectionNumber7 = "..\\..\\..\\..\\QRNGDotNet\\DirectionNumber\\joe-kuo-7.21201";
-
+        private const string DirectionNumber5 = "\\DirectionNumber\\joe-kuo-5.21201";
+        private const string DirectionNumber6 = "\\DirectionNumber\\joe-kuo-6.21201";
+        private const string DirectionNumber7 = "\\DirectionNumber\\joe-kuo-7.21201";
+        
 
         static Config()
         {
@@ -23,6 +22,7 @@ namespace QRNGDotNet
         {
 
         }
+
         public static Config Instance
         {
             get
@@ -31,18 +31,18 @@ namespace QRNGDotNet
             }
         }
 
-        public string GetPath(string criteria)
+        public Stream GetPath(string criteria)
         {
-            switch(criteria){
+            switch (criteria){
                 case "5":
-                    return DirectionNumber5;
-               
+                    return new MemoryStream(Properties.Resources.joe_kuo_5);
+
                 case "6":
-                    return DirectionNumber6;
-              
+                    return new MemoryStream(Properties.Resources.joe_kuo_6);
+
                 case "7":
-                    return DirectionNumber7;
-    
+                    return new MemoryStream(Properties.Resources.joe_kuo_7);
+
                 default:
                     throw new ArgumentOutOfRangeException("criteria");
 
