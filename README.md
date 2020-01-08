@@ -11,6 +11,6 @@ Here is a list of what will be added in the future:
 
 ***
 ### User Guide
-####Adding Initialization Numbers
+#### Adding Initialization Numbers
 While the initialization numbers included in the implementation are currently optimal, it is possible to add new initialization numbers by modifying the Config.cs file and adding the new initialization numbers to the Resources.resx file in the properties directory. Some users might want to generate their own initialization numbers. In this case the best solution would be to override load the DirectionNumber class.
 
