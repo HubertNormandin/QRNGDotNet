@@ -5,4 +5,4 @@ Here is a list of what will be added in the future:
 - [ ] Samples and userguide: Samples showing the uses of the library.
 - [ ] Implementation of other low-discrepency sequences to be determined. @HubertNormandin is currently looking into the feasability of implementing extensible (t,s)-Sequences with a leap-frog algorithm.
 
-An effort is currently made to improve the concurrency and reduce some of the initialization overhead
+An effort is currently made to improve the concurrency and reduce some of the initialization overhead .
