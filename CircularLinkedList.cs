@@ -7,13 +7,13 @@ namespace QRNGDotNet
 {
     public class CircularLinkedList<T>: IList<T>
     {
-        public class CircularLinkedListEnumerator<T> : IEnumerator<T>
+        public class CircularLinkedListEnumerator<TEnum> : IEnumerator<TEnum>
         {
             private ArrayList arr;
             private IEnumerator enumerator;
             public object Current => this.enumerator.Current;
 
-            T IEnumerator<T>.Current => (T)this.enumerator.Current;
+            TEnum IEnumerator<TEnum>.Current => (TEnum)this.enumerator.Current;
 
             public CircularLinkedListEnumerator(ArrayList arr)
             {

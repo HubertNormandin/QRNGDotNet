@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace QRNGDotNet.SobolSequence
 {
-    public class SobolSequence: ParallelQRNG
+    public class SobolSequence: QRNG
     {
         public class SobolPartition: QRNGPartition
         {
@@ -31,7 +31,7 @@ namespace QRNGDotNet.SobolSequence
                 this.thread_id = thread_id;
             }
 
-            public override uint Next()
+            public uint NextUInt()
             {
 
                 uint yn = this.X[this.k - 1];
@@ -54,6 +54,58 @@ namespace QRNGDotNet.SobolSequence
                 this.X[k] = yn ^ m ^ v;
                 this.k++;
                 return yn;
+            }
+
+
+            public uint NextUInt(long maxValue)
+            {
+                if (maxValue < 0)
+                {
+                    throw new ArgumentOutOfRangeException("maxValue", "maxValue is negative");
+                }
+                return (uint)(this.NextDouble() * maxValue);
+            }
+
+            public uint NextUInt(long minValue, long maxValue)
+            {
+                if (minValue < maxValue)
+                {
+                    throw new ArgumentOutOfRangeException("maxValue", "maxValue is negative");
+                }
+                return (this.NextUInt() * (uint)(maxValue - minValue + 1)) << 0;
+            }
+
+            public override int Next()
+            {
+                return (int)(this.NextDouble() * Int32.MaxValue);
+            }
+
+            public override int Next(int maxValue)
+            {
+                if (maxValue < 0)
+                {
+                    throw new ArgumentOutOfRangeException("maxValue", "maxValue is negative");
+                }
+                return (this.Next() * (maxValue + 1)) << 0;
+            }
+
+            public override int Next(int minValue, int maxValue)
+            {
+                if (minValue > maxValue)
+                {
+                    throw new ArgumentOutOfRangeException("minValue", "minValue is smaller than maxValue");
+                }
+                return (this.Next() * (maxValue - minValue + 1)) << 0;
+            }
+
+            public new void NextBytes(byte[] buffer)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override double NextDouble()
+            {
+                return this.NextUInt() / TWO32;
             }
 
         }
@@ -107,6 +159,10 @@ namespace QRNGDotNet.SobolSequence
             // Get the Enumerator for the circularlinkedlist
             this.partitions_enum = this.partitions.GetEnumerator();
         }
+
+        /// <summary>
+        /// Reset every partitions to the first number
+        /// </summary>
         public override void Reset()
         {
             lock (this._lock)
@@ -118,11 +174,20 @@ namespace QRNGDotNet.SobolSequence
                 }
             }
         }
+
+        /// <summary>
+        /// Reset the dimension to the first
+        /// </summary>
         public override void ResetDimension()
         {
             this.dvl.Reset();
         }
 
+        /// <summary>
+        /// Return the position of the rightmost zero bit of the number n
+        /// </summary>
+        /// <param name="n">a number</param>
+        /// <returns></returns>
         protected static uint RightmostZeroBit(uint n)
         {
             uint i = 1;
@@ -153,7 +218,7 @@ namespace QRNGDotNet.SobolSequence
                 this.partitions_enum.MoveNext();
                 parts = this.partitions_enum.Current;
             }
-            return parts.Next();
+            return parts.NextUInt();
         }
 
         public uint NextUInt(long maxValue)
@@ -206,6 +271,8 @@ namespace QRNGDotNet.SobolSequence
             return this.NextUInt() / TWO32;
         }
         #endregion
+
+        //Return a copy of the partitions used by this instance of QRNG
         public override QRNGPartition[] GetPartitions()
         {
             SobolPartition[] a = new SobolPartition[this.partitions.Count];
