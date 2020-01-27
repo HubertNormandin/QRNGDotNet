@@ -30,7 +30,11 @@ namespace QRNGDotNet.SobolSequence
                 this.p =  (byte)Math.Log(threads, 2);
                 this.thread_id = thread_id;
             }
-
+            #region Random Implementation
+            /// <summary>
+            /// Generate the next uint in the sequences up to UInt32.MaxValue.
+            /// </summary>
+            /// <returns>The next uint in Sobol's sequence.</returns>
             public uint NextUInt()
             {
 
@@ -56,7 +60,11 @@ namespace QRNGDotNet.SobolSequence
                 return yn;
             }
 
-
+            /// <summary>
+            /// Generate the next uint in the sequences up to maxValue.
+            /// </summary>
+            /// <param name="maxValue">The maximum value that can be generated.</param>
+            /// <returns>The next uint in Sobol's sequence, subject to upper bound maxValue.</returns>
             public uint NextUInt(long maxValue)
             {
                 if (maxValue < 0)
@@ -66,6 +74,12 @@ namespace QRNGDotNet.SobolSequence
                 return (uint)(this.NextDouble() * maxValue);
             }
 
+            /// <summary>
+            /// Generate the next uint in the sequences, between the bounds minValue-MaxValue.
+            /// </summary>
+            /// <param name="minValue">The minimum value that can be generated.</param>
+            /// <param name="maxValue">The maximum value that can be generated.</param>
+            /// <returns>The next uint in Sobol's sequence, subject to bounds minValue-maxValue.</returns>
             public uint NextUInt(long minValue, long maxValue)
             {
                 if (minValue < maxValue)
@@ -75,11 +89,20 @@ namespace QRNGDotNet.SobolSequence
                 return (this.NextUInt() * (uint)(maxValue - minValue + 1)) << 0;
             }
 
+            /// <summary>
+            /// Generate the next int in the sequences up to Int32.MaxValue.
+            /// </summary>
+            /// <returns>The next int in Sobol's sequence.</returns>
             public override int Next()
             {
                 return (int)(this.NextDouble() * Int32.MaxValue);
             }
 
+            /// <summary>
+            /// Generate the next int in the sequences up to maxValue.
+            /// </summary>
+            /// <param name="maxValue">The maximum value that can be generated.</param>
+            /// <returns>The next int in Sobol's sequence, subject to upper bound maxValue.</returns>
             public override int Next(int maxValue)
             {
                 if (maxValue < 0)
@@ -89,6 +112,12 @@ namespace QRNGDotNet.SobolSequence
                 return (this.Next() * (maxValue + 1)) << 0;
             }
 
+            /// <summary>
+            /// Generate the next int in the sequences, between the bounds minValue-MaxValue.
+            /// </summary>
+            /// <param name="minValue">The minimum value that can be generated.</param>
+            /// <param name="maxValue">The maximum value that can be generated.</param>
+            /// <returns>The next int in Sobol's sequence, subject to upper bound maxValue.</returns>
             public override int Next(int minValue, int maxValue)
             {
                 if (minValue > maxValue)
@@ -97,17 +126,23 @@ namespace QRNGDotNet.SobolSequence
                 }
                 return (this.Next() * (maxValue - minValue + 1)) << 0;
             }
-
+            /// <summary>
+            /// Not implemented!!!
+            /// </summary>
+            /// <param name="buffer"></param>
             public new void NextBytes(byte[] buffer)
             {
                 throw new NotImplementedException();
             }
-
+            /// <summary>
+            /// Generate the next int in the sequences up to Int32.MaxValue.
+            /// </summary>
+            /// <returns>The next double in Sobol's sequence.</returns>
             public override double NextDouble()
             {
                 return this.NextUInt() / TWO32;
             }
-
+            #endregion
         }
         private const double TWO32 = 4294967296;
 
@@ -187,7 +222,7 @@ namespace QRNGDotNet.SobolSequence
         /// Return the position of the rightmost zero bit of the number n
         /// </summary>
         /// <param name="n">a number</param>
-        /// <returns></returns>
+        /// <returns>The rightmost zero bit.</returns>
         protected static uint RightmostZeroBit(uint n)
         {
             uint i = 1;
@@ -210,6 +245,10 @@ namespace QRNGDotNet.SobolSequence
         }
 
         #region RANDOM_INTERFACE
+        /// <summary>
+        /// Generate the next uint in the sequences up to UInt32.MaxValue.
+        /// </summary>
+        /// <returns>The next uint in Sobol's sequence.</returns>
         public uint NextUInt()
         {
             SobolPartition parts = null;
@@ -221,6 +260,11 @@ namespace QRNGDotNet.SobolSequence
             return parts.NextUInt();
         }
 
+        /// <summary>
+        /// Generate the next uint in the sequences up to maxValue.
+        /// </summary>
+        /// <param name="maxValue">The maximum value that can be generated.</param>
+        /// <returns>The next uint in Sobol's sequence, subject to upper bound maxValue.</returns>
         public uint NextUInt(long maxValue)
         {
             if (maxValue < 0)
@@ -230,6 +274,12 @@ namespace QRNGDotNet.SobolSequence
             return (uint)(this.NextDouble() * maxValue);
         }
 
+        /// <summary>
+        /// Generate the next uint in the sequences, between the bounds minValue-MaxValue.
+        /// </summary>
+        /// <param name="minValue">The minimum value that can be generated.</param>
+        /// <param name="maxValue">The maximum value that can be generated.</param>
+        /// <returns>The next uint in Sobol's sequence, subject to bounds minValue-maxValue.</returns>
         public uint NextUInt(long minValue, long maxValue)
         {
             if (minValue < maxValue)
@@ -239,10 +289,20 @@ namespace QRNGDotNet.SobolSequence
             return (this.NextUInt() * (uint)(maxValue - minValue + 1)) << 0;
         }
 
+        /// <summary>
+        /// Generate the next int in the sequences up to Int32.MaxValue.
+        /// </summary>
+        /// <returns>The next int in Sobol's sequence.</returns>
         public override int Next()
         {
             return (int)(this.NextDouble() * Int32.MaxValue);
         }
+
+        /// <summary>
+        /// Generate the next int in the sequences up to maxValue.
+        /// </summary>
+        /// <param name="maxValue">The maximum value that can be generated.</param>
+        /// <returns>The next int in Sobol's sequence, subject to upper bound maxValue.</returns>
         public override int Next(int maxValue)
         {
             if (maxValue < 0)
@@ -252,6 +312,12 @@ namespace QRNGDotNet.SobolSequence
             return (this.Next() * (maxValue + 1)) << 0;
         }
 
+        /// <summary>
+        /// Generate the next int in the sequences, between the bounds minValue-MaxValue.
+        /// </summary>
+        /// <param name="minValue">The minimum value that can be generated.</param>
+        /// <param name="maxValue">The maximum value that can be generated.</param>
+        /// <returns>The next int in Sobol's sequence, subject to upper bound maxValue.</returns>
         public override int Next(int minValue, int maxValue)
         {
             if (minValue > maxValue)
@@ -260,12 +326,18 @@ namespace QRNGDotNet.SobolSequence
             }
             return (this.Next() * (maxValue - minValue + 1)) << 0;
         }
-
+        /// <summary>
+        /// Not implemented!!!
+        /// </summary>
+        /// <param name="buffer"></param>
         public new void NextBytes(byte[] buffer)
         {
             throw new NotImplementedException();
         }
-
+        /// <summary>
+        /// Generate the next int in the sequences up to Int32.MaxValue.
+        /// </summary>
+        /// <returns>The next double in Sobol's sequence.</returns>
         public override double NextDouble()
         {
             return this.NextUInt() / TWO32;

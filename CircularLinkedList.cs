@@ -31,12 +31,16 @@ namespace QRNGDotNet
                 }
                 return true;
             }
-
+            /// <summary>
+            /// 
+            /// </summary>
             public void Reset()
             {
                 this.enumerator.Reset();
             }
-
+            /// <summary>
+            /// 
+            /// </summary>
             public void Dispose()
             {
                 throw new NotImplementedException();
@@ -63,11 +67,21 @@ namespace QRNGDotNet
 
         T IList<T>.this[int index] { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="item">An object of type T</param>
+        /// <returns>The index of the item</returns>
         public int IndexOf(T item)
         {
             return this.arr.IndexOf(item);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="index">Index where the item will be inserted</param>
+        /// <param name="item"></param>
         public void Insert(int index, T item)
         {
             this.arr.Insert(index, item);
@@ -103,7 +117,10 @@ namespace QRNGDotNet
             this.arr.Remove(item);
             return true;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns> The enumerator for the CircularLinkedList object</returns>
         public IEnumerator<T> GetEnumerator()
         {
             return new CircularLinkedListEnumerator<T>(this.arr);

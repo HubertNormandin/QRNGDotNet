@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QRNGDotNet", "QRNGDotNet.cs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QRNGDotNetTest", "QRNGDotNetTest\QRNGDotNetTest.csproj", "{872E2C48-F481-4258-B6C8-6C2C4D740B6F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{BC6D9FAF-4AB2-4590-8FF2-CFA31FDC4401}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsianOption", "Samples\AsianOption\AsianOption.csproj", "{3B11EB52-1BD1-4554-9BDB-01A8BE733ECF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,9 +35,20 @@ Global
 		{872E2C48-F481-4258-B6C8-6C2C4D740B6F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{872E2C48-F481-4258-B6C8-6C2C4D740B6F}.Release|x64.ActiveCfg = Release|Any CPU
 		{872E2C48-F481-4258-B6C8-6C2C4D740B6F}.Release|x64.Build.0 = Release|Any CPU
+		{3B11EB52-1BD1-4554-9BDB-01A8BE733ECF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B11EB52-1BD1-4554-9BDB-01A8BE733ECF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B11EB52-1BD1-4554-9BDB-01A8BE733ECF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3B11EB52-1BD1-4554-9BDB-01A8BE733ECF}.Debug|x64.Build.0 = Debug|Any CPU
+		{3B11EB52-1BD1-4554-9BDB-01A8BE733ECF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B11EB52-1BD1-4554-9BDB-01A8BE733ECF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B11EB52-1BD1-4554-9BDB-01A8BE733ECF}.Release|x64.ActiveCfg = Release|Any CPU
+		{3B11EB52-1BD1-4554-9BDB-01A8BE733ECF}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3B11EB52-1BD1-4554-9BDB-01A8BE733ECF} = {BC6D9FAF-4AB2-4590-8FF2-CFA31FDC4401}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {819783E1-7A33-4F51-A6E8-82BCBCB2392A}
