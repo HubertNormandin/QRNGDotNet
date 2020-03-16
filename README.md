@@ -6,7 +6,7 @@ QRNGDotNet was developed to provide access to .NET developper with fast and conc
 Here is a list of what will be added in the future:
 - [ ] Documentation: The current implementation is partially documented.
 - [ ] Samples and userguide: Samples showing the uses of the library.
-- [ ] Implementation of other low-discrepancy sequences to be determined. @HubertNormandin is currently looking into the feasability of implementing extensible (t,s)-Sequences with a leap-frog algorithm.
+- [ ] Implementation of other low-discrepancy sequences to be determined. @HubertNormandin is currently looking into the feasability of implementing Faure sequences and extensible (t,s)-sequence with a parallelisable algorithm.
 
 
 ***
