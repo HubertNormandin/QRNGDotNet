@@ -1,35 +1,45 @@
 using System;
+using System.Threading;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+
 
 namespace QRNGDotNet.SobolSequence
 {
-    public class SobolSequence: QRNG
+    public class SobolSequence : QRNG
     {
-        public class SobolPartition: QRNGPartition
+        public class SobolPartition : QRNGPartition
         {
             private byte p;
             private readonly uint threads;
             private uint[] V;
-            private uint k=1;
+            private uint k = 1;
             private readonly uint thread_id;
             private uint[] X;
             private int length = 2;
-            private object _lock = new object();
+            private Mutex mutex = new Mutex();
 
             public override void Reset()
             {
                 this.k = 1;
             }
-            public SobolPartition(uint init,  uint[] V, uint threads, uint thread_id)
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="init"></param>
+            /// <param name="V"></param>
+            /// <param name="threads"></param>
+            /// <param name="thread_id"></param>
+            public SobolPartition(uint init, uint[] V, uint threads, uint thread_id)
             {
                 this.X = new uint[this.length];
                 this.X[0] = init;
                 this.V = V;
                 this.threads = threads;
-                this.p =  (byte)Math.Log(threads, 2);
+                this.p = (byte)Math.Log(threads, 2);
                 this.thread_id = thread_id;
             }
+
             #region Random Implementation
             /// <summary>
             /// Generate the next uint in the sequences up to UInt32.MaxValue.
@@ -37,7 +47,6 @@ namespace QRNGDotNet.SobolSequence
             /// <returns>The next uint in Sobol's sequence.</returns>
             public uint NextUInt()
             {
-
                 uint yn = this.X[this.k - 1];
                 uint m = this.V[this.p];
 
@@ -47,19 +56,22 @@ namespace QRNGDotNet.SobolSequence
                 uint v = this.V[r];
 
                 // DOUBLE THE SIZE OF THE ARRAY
-                lock (this._lock)
-                {
+                mutex.WaitOne();
                     if (this.length <= (k + 1))
                     {
                         ResizeArray(ref this.X);
                         this.length *= 2;
                     }
-                }
+                mutex.ReleaseMutex();
                 this.X[k] = yn ^ m ^ v;
                 this.k++;
                 return yn;
             }
 
+            public override uint GetThreadID()
+            {
+                return this.thread_id;
+            }
             /// <summary>
             /// Generate the next uint in the sequences up to maxValue.
             /// </summary>
@@ -147,7 +159,7 @@ namespace QRNGDotNet.SobolSequence
         private const double TWO32 = 4294967296;
 
 
-        private CircularLinkedList<SobolPartition> partitions;
+        private CircularList<SobolPartition> partitions;
         private IEnumerator<SobolPartition> partitions_enum;
         private DirectionLoader.DirectionNumberLoader dvl;
         private Direction dir;
@@ -160,7 +172,7 @@ namespace QRNGDotNet.SobolSequence
             set
             {
                 // check whether the value is a power of 2
-                if (((value > 0) && ((value & (~value + 1)) == value))||value==1)
+                if (((value > 0) && ((value & (~value + 1)) == value)) || value == 1)
                 {
                     this.length = value;
                 }
@@ -179,8 +191,8 @@ namespace QRNGDotNet.SobolSequence
             this.MaxDegreeOfParallelism = MaxDegreeOfParallelism;
 
             // Instantiates partitions
-            this.partitions = new CircularLinkedList<SobolPartition>();
-            
+            this.partitions = new CircularList<SobolPartition>();
+
             //Generate all the partitions
             uint x = 0;
             uint[] v = this.dir.V();
@@ -202,7 +214,7 @@ namespace QRNGDotNet.SobolSequence
         {
             lock (this._lock)
             {
-                for(int i =0; i < this.MaxDegreeOfParallelism; i++)
+                for (int i = 0; i < this.MaxDegreeOfParallelism; i++)
                 {
                     this.partitions_enum.MoveNext();
                     this.partitions_enum.Reset();
@@ -236,8 +248,8 @@ namespace QRNGDotNet.SobolSequence
 
         private static void ResizeArray<T>(ref T[] x)
         {
-            T[] temp = new T[x.Length*2];
-            for (int i = 0; i<x.Length; i++)
+            T[] temp = new T[x.Length * 2];
+            for (int i = 0; i < x.Length; i++)
             {
                 temp[i] = x[i];
             }
@@ -326,6 +338,7 @@ namespace QRNGDotNet.SobolSequence
             }
             return (this.Next() * (maxValue - minValue + 1)) << 0;
         }
+
         /// <summary>
         /// Not implemented!!!
         /// </summary>
@@ -334,6 +347,7 @@ namespace QRNGDotNet.SobolSequence
         {
             throw new NotImplementedException();
         }
+
         /// <summary>
         /// Generate the next int in the sequences up to Int32.MaxValue.
         /// </summary>
@@ -344,7 +358,10 @@ namespace QRNGDotNet.SobolSequence
         }
         #endregion
 
-        //Return a copy of the partitions used by this instance of QRNG
+        /// <summary>
+        /// Return a copy of the partitions used by this instance of QRNG
+        /// </summary>
+        /// <returns> A QRNGPartition[] containing all the partition of the Sobol Sequences. </returns>
         public override QRNGPartition[] GetPartitions()
         {
             SobolPartition[] a = new SobolPartition[this.partitions.Count];

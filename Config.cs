@@ -8,10 +8,6 @@ namespace QRNGDotNet
     {
         //Instance of the singleton
         private static readonly Config _instance = new Config();
-        private const string DirectionNumber5 = "\\DirectionNumber\\joe-kuo-5.21201";
-        private const string DirectionNumber6 = "\\DirectionNumber\\joe-kuo-6.21201";
-        private const string DirectionNumber7 = "\\DirectionNumber\\joe-kuo-7.21201";
-        
 
         static Config()
         {

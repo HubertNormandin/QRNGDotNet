@@ -61,7 +61,7 @@ namespace QRNGDotNet.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized resource of type System.Byte[]. Contains the initialization numberfor Sobol's sequence with Criteria 5.
         /// </summary>
         internal static byte[] joe_kuo_5 {
             get {
@@ -69,9 +69,9 @@ namespace QRNGDotNet.Properties {
                 return ((byte[])(obj));
             }
         }
-        
+
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized resource of type System.Byte[]. Contains the initialization numberfor Sobol's sequence with Criteria 6.
         /// </summary>
         internal static byte[] joe_kuo_6 {
             get {
@@ -79,9 +79,9 @@ namespace QRNGDotNet.Properties {
                 return ((byte[])(obj));
             }
         }
-        
+
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized resource of type System.Byte[]. Contains the initialization numberfor Sobol's sequence with Criteria 7.
         /// </summary>
         internal static byte[] joe_kuo_7 {
             get {
